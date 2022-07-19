@@ -1,0 +1,9 @@
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="TestExample-TestNG" preserve-order="false">
+    <test name="test with testNG">
+        <parameter name="first-name" value="Rajana"></parameter>
+        <classes>
+            <class name="org.example.AppTest"/>
+        </classes>
+    </test>
+</suite>
