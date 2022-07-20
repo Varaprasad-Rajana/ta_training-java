@@ -3,7 +3,7 @@
     <test name="test with testNG">
         <parameter name="first-name" value="Rajana"></parameter>
         <classes>
-            <class name="org.example.AppTest"/>
+            <class name="org.example.TestTestClass"/>
         </classes>
     </test>
 </suite>
