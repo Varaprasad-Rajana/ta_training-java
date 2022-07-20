@@ -2,10 +2,8 @@ package org.example;
 
 
 import org.testng.Assert;
-import org.testng.annotations.BeforeClass;
-import org.testng.annotations.BeforeSuite;
-import org.testng.annotations.BeforeTest;
-import org.testng.annotations.Test;
+import org.testng.annotations.*;
+import org.testng.asserts.SoftAssert;
 
 /**
  * Unit test for simple App.
@@ -46,5 +44,30 @@ public class AppTest
     public void bTest()
     {
         System.out.println("Before test");
+    }
+    // day2 continued class
+    @Test(groups = {"Kids Wear"})
+    public void test1()
+    {
+        SoftAssert softAssert = new SoftAssert();
+        softAssert.assertEquals("One", "Two");
+        System.out.println("Print true or not");
+        softAssert.assertEquals("One", "One");
+        softAssert.assertEquals("Two", "Two");
+        System.out.println("Print true or not after");
+        softAssert.assertAll("Test Message");
+        System.out.println("a1bc");
+    }
+    @Test(groups = {"Fashion"})
+    public void test2()
+    {
+        System.out.println("ab2c");
+    }
+@Parameters(value = {"browser"})
+    @Test
+    public void test3(String browser)
+    {
+        Assert.assertTrue( true);
+        System.out.println("abc3"+browser);
     }
 }

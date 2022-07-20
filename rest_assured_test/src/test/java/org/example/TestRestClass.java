@@ -61,38 +61,6 @@ public class TestRestClass {
     }
 
     @Test
-    public void deleteUsersTest() {
-        Response responseUserCreation =
-                requestSpecification.body(createUser()).expect().statusCode(HttpStatus.SC_CREATED).log().ifError()
-                        .when().post("https://gorest.co.in/public/v2/users/");
-
-        User userForDeletion = responseUserCreation.as(User.class);
-        requestSpecification.expect().statusCode(HttpStatus.SC_NO_CONTENT).log().ifError()
-                .when().delete("https://gorest.co.in/public/v2/users/" + userForDeletion.getId());
-        Response response = requestSpecification.expect().statusCode(HttpStatus.SC_OK).log().ifError()
-                .when().get("https://gorest.co.in/public/v2/users");
-        List<User> users = response.jsonPath().getList("", User.class);
-        Assert.assertFalse(users.contains(userForDeletion), "Expected users list doesn't contain deleted element");
-    }
-
-    private void setCommonParams(RequestSpecification requestSpecification) {
-        Map<String, String> headers = new HashMap<>();
-        headers.put("Accept", "application/json");
-        headers.put("Content-Type", "application/json");
-        requestSpecification.headers(headers);
-    }
-
-    private User createUser() {
-        Random random = new Random();
-        User user = new User();
-        user.setName("test" + random.nextInt());
-        user.setEmail("testEmail" + random.nextInt() + "@gmail.com");
-        user.setGender("Male");
-        user.setStatus("active");
-
-        return user;
-    }
-    @Test
     public void createUserTest() {
         Random random = new Random();
         User userToCreate = new User();
@@ -111,5 +79,58 @@ public class TestRestClass {
                 .when().post("https://gorest.co.in/public/v2/users");
         User createdUser = responseCreatedUser.as(User.class);
         Assert.assertEquals(createdUser.getName(), userToCreate.getName(), "Users' names are not the same");
+    }
+
+    @Test
+    public void testGetUserById() {
+        RequestSpecification requestSpecification =
+                RestAssured.given().auth().oauth2("8d3edc50fd5dbb75c78aa0e6b003827314f21f4aa8f03facd79465c96ce44c55");
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Accept", "application/json");
+        headers.put("Content-Type", "application/json");
+        requestSpecification.headers(headers);
+
+        Response response = requestSpecification.expect().statusCode(HttpStatus.SC_OK).log().ifError()
+                .when().get("https://gorest.co.in/public/v2/users");
+
+        List<User> users = response.jsonPath().getList("", User.class);
+        User testUser = users.get(0);
+        Response responseUserById = requestSpecification.expect().statusCode(HttpStatus.SC_OK).log().ifError()
+                .when().get("https://gorest.co.in/public/v2/users/" + testUser.getId());
+        User actualuser = responseUserById.as(User.class);
+        Assert.assertEquals(actualuser.getName(), testUser.getName(), "Users' names are not the same");
+
+    }
+
+    @Test
+    public void deleteUsersTest() {
+        Response responseUserCreation =
+                requestSpecification.body(createUser()).expect().statusCode(HttpStatus.SC_CREATED).log().ifError()
+                        .when().post("https://gorest.co.in/public/v2/users/");
+
+        User userForDeletion = responseUserCreation.as(User.class);
+        requestSpecification.expect().statusCode(HttpStatus.SC_NO_CONTENT).log().ifError()
+                .when().delete("https://gorest.co.in/public/v2/users/" + userForDeletion.getId());
+        Response response = requestSpecification.expect().statusCode(HttpStatus.SC_OK).log().ifError()
+                .when().get("https://gorest.co.in/public/v2/users");
+        List<User> users = response.jsonPath().getList("", User.class);
+        Assert.assertFalse(users.contains(userForDeletion), "Expected users list doesn't contain deleted element");
+    }
+    private void setCommonParams(RequestSpecification requestSpecification) {
+        Map<String, String> headers = new HashMap<>();
+        headers.put("Accept", "application/json");
+        headers.put("Content-Type", "application/json");
+        requestSpecification.headers(headers);
+    }
+
+    private User createUser() {
+        Random random = new Random();
+        User user = new User();
+        user.setName("test" + random.nextInt());
+        user.setEmail("testEmail" + random.nextInt() + "@gmail.com");
+        user.setGender("Male");
+        user.setStatus("active");
+
+        return user;
     }
 }
